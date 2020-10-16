@@ -13,10 +13,12 @@ import 'package:io/io.dart';
 /// Runs a process
 Future<void> runFlutterCmd(
   String version,
-  List<String> args,
-) async {
-  final execPath = getFlutterSdkExec(version);
+  List<String> args, {
+  bool spawn = false,
+}) async {
   args ??= [];
+  final execPath = getFlutterSdkExec(version, spawn: spawn);
+
   // Check if can execute path first
   if (!await isExecutable(execPath)) {
     throw UsageError('Flutter version $version is not installed');

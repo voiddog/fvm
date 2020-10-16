@@ -3,6 +3,7 @@ import 'package:args/command_runner.dart';
 import 'package:cli_util/cli_logging.dart';
 
 import 'package:fvm/src/commands/config_command.dart';
+import 'package:fvm/src/commands/spawn_command.dart';
 import 'package:fvm/src/utils/logger.dart';
 
 import 'package:fvm/src/commands/flutter_command.dart';
@@ -30,6 +31,7 @@ Future<void> fvmRunner(List<String> args) async {
   runner..addCommand(VersionCommand());
   runner..addCommand(ConfigCommand());
   runner..addCommand(ReleasesCommand());
+  runner..addCommand(SpawnCommand());
 
   return await runner.run(args).catchError((exc, st) {
     if (exc is String) {

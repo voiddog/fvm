@@ -41,12 +41,17 @@ bool isGlobalVersion(String version) {
   return globalVersion == version;
 }
 
-String getFlutterSdkExec(String version) {
+String getFlutterSdkExec(String version, {spawn = false}) {
   // If version not provided find it within a project
-  if (version == null || version.isEmpty) {
+  if ((version == null || version.isEmpty) && spawn == false) {
     return whichSync('flutter');
   }
-  final sdkPath = join(kVersionsDir.path, version, 'bin');
+  String sdkPath;
+  if (spawn == false) {
+    sdkPath = join(kVersionsDir.path, version, 'bin');
+  } else {
+    sdkPath = join(kSpawnDir.path, version, 'bin');
+  }
 
   return join(sdkPath, Platform.isWindows ? 'flutter.bat' : 'flutter');
 }

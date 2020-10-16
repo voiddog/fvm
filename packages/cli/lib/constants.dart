@@ -15,6 +15,7 @@ final kFlutterRepo =
 var kWorkingDirectory = Directory.current;
 
 /// FVM Home directory
+/// TODO: Turn this into a function for memo
 String get kFvmHome {
   var home = envVars['FVM_HOME'];
   if (home != null) {
@@ -35,12 +36,17 @@ File get kFvmSettings {
 }
 
 /// Where Flutter SDK Versions are stored
+/// TODO: Turn this into a function for memo
 Directory get kVersionsDir {
   final settings = Settings.readSync();
   if (settings.cachePath != null && settings.cachePath.isNotEmpty) {
     return Directory(path.normalize(settings.cachePath));
   }
   return Directory(path.join(kFvmHome, 'versions'));
+}
+
+Directory get kSpawnDir {
+  return Directory(path.join(kFvmHome, 'spawns'));
 }
 
 /// Where Default Flutter SDK is stored
