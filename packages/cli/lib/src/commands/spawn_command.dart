@@ -30,33 +30,24 @@ class SpawnCommand extends Command {
 
   @override
   Future<void> run() async {
-    final project = await FlutterProjectRepo.findAncestor();
-
     final version = argResults.arguments[0];
 
-    if (project != null && project.pinnedVersion != null || version != null) {
-      await installWorkflow(version);
-      FvmLogger.info('FVM: Running version ${project.pinnedVersion}');
-      final spawnId = Uuid().v4();
-      final refVersionPath = join(kVersionsDir.path, version);
-      final spawnVersionDir = Directory(join(kSpawnDir.path, spawnId));
+    if (version != null) {
+      if (!await LocalVersionRepo.isInstalled(version)) {
+        await installWorkflow(version);
+      }
+      FvmLogger.info('FVM: Running version $version');
+
       try {
-        final progress = logger.progress('Preparing...');
-        await copyPath(refVersionPath, spawnVersionDir.path);
-        progress.finish(showTiming: true);
         // Remove version for the args
-        argResults.arguments.remove(version);
-        await runFlutterCmd(spawnId, argResults.arguments, spawn: true);
+        final args = argResults.arguments.toList()..remove(version);
+        await runFlutterCmd(version, args);
       } on Exception catch (err) {
         logger.trace(err.toString());
         throw const InternalError('Spawn Flutter process failed');
-      } finally {
-        if (await spawnVersionDir.exists()) {
-          await spawnVersionDir.delete(recursive: true);
-        }
       }
     } else {
-      throw Exception('To run Spawn pin the version in the project');
+      throw Exception('No version was provided');
     }
   }
 }
