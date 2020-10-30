@@ -68,7 +68,12 @@ class UseCommand extends Command {
     final force = argResults['force'] == true;
 
     // Get valid flutter version
-    final validVersion = await inferFlutterVersion(version);
+    final validVersion = await inferFlutterVersion(version).catchError((error) {
+      if (force) {
+        return version;
+      }
+      throw error;
+    });
     final isVersionInstalled = await LocalVersionRepo.isInstalled(validVersion);
 
     if (!isVersionInstalled) {
